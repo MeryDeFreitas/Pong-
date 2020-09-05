@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Gamedev Canvas Workshop</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: rgba(8, 5, 5, 0.089); display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="480" height="320"></canvas>
+
+<script>
+
+//Se añade el canvar al js
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+//Se convierte el radio del cirulo en var
+var ballRadius = 10;
+//x y y es donde aparecera la pelota y se ira modificando para darle recorrido
+var x = canvas.width/2;
+var y = canvas.height-30;
+//Con estas var damos mov a la pelota
+var dx = 2;
+var dy = -2;
+
+
+//Funcion que dibuja la pelota
+function drawBall() {
+    ctx.beginPath();
+    ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function draw() {
+    //Funcion que se encarga de limpiar el canvas entre cada setInternal
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //Invoca las funciones de dibujar la pelota
+    drawBall();
+    
+    //Define como debe cambiar de direccion la pelota si alcanza los bordes del canvas
+    if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+        dx = -dx;
+    }
+    if(y + dy > canvas.height-ballRadius || y + dy < ballRadius) {
+        dy = -dy;
+    }
+    //Esto es lo que hace que la pelota este siempre en movimiento
+    x += dx;
+    y += dy;
+}
+
+//Repite automaticamente la funcion de dibujar cada 10 milisegundos
+setInterval(draw, 10);
+
+</script>
+
+</body>
+</html>

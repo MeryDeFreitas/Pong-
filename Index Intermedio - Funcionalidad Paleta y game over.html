@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Gamedev Canvas Workshop</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: rgba(8, 5, 5, 0.089); display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="480" height="320"></canvas>
+
+<script>
+
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+var ballRadius = 10;
+var x = canvas.width/2;
+var y = canvas.height-30;
+var dx = 2;
+var dy = -2;
+
+//Se añade las var de la paleta
+var paddleHeight = 10;
+var paddleWidth = 75;
+//la posición en el eje X en la que empieza a dibujarse la paleta
+var paddleX = (canvas.width-paddleWidth)/2;
+// las var que indican si se presiono las teclas, se definen como falsas porque el usuario no las estara oprimiendo en primer lugar.
+var rightPressed = false;
+var leftPressed = false;
+
+//Se añade los add event listeners para detectar si el usuario presiona las teclas izq/der
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+
+//Si detecta que el usuario apretó la tecla cambiará las var a true
+function keyDownHandler(e) {
+    if(e.keyCode == 39) {
+        rightPressed = true;
+    }
+    else if(e.keyCode == 37) {
+        leftPressed = true;
+    }
+}
+function keyUpHandler(e) {
+    if(e.keyCode == 39) {
+        rightPressed = false;
+    }
+    else if(e.keyCode == 37) {
+        leftPressed = false;
+    }
+}
+
+function drawBall() {
+    ctx.beginPath();
+    ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
+}
+
+//Funcion que dibuja la paleta
+function drawPaddle() {
+    ctx.beginPath();
+    ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //Invoca las funciones de dibujar la pelota y la paleta
+    drawBall();
+    drawPaddle();
+    
+    //Define como debe cambiar de direccion la pelota si alcanza los bordes del canvas
+    if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+        dx = -dx;
+    }
+    if(y + dy < ballRadius) {
+    dy = -dy;
+    } 
+    //Alcanzar la pared inferior supondrá el fin del juego.
+    //un "if else" que activará el estado de "final de juego" cuando la pelota colisione con el borde inferior del terreno de juego.
+    else if(y + dy > canvas.height-ballRadius) {
+
+    //Pero este if detecta si la paleta toco la bola y la puso en juego
+    if(x > paddleX && x < paddleX + paddleWidth) {
+        dy = -dy+-0.5;
+    }    // Mostrará un mensaje con la función alert() y reiniciará el juego volviendo a cargar la página. 
+    else {
+        alert("GAME OVER");
+        document.location.reload();
+    }
+}
+    //Define como debe moverse la paleta si el usuario oprime las teclas, respetando el limite del canvas
+    if(rightPressed && paddleX < canvas.width-paddleWidth) {
+        paddleX += 5;
+    }
+    else if(leftPressed && paddleX > 0) {
+        paddleX -= 5;
+    }
+    x += dx;
+    y += dy;
+}
+
+setInterval(draw, 10);
+
+</script>
+
+</body>
+</html>
